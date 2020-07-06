@@ -31,7 +31,7 @@ print("Dataset'in boyutu :" + str(dataset.shape))
 print("_____________________________")
 
 ##DATASETIN 20 NESNESINE BAK
-## print(dataset.head(20))
+#print(dataset.head(20))
 
 ##DATASETIN ISTATIKSEL OZETI
 print(dataset.describe())
@@ -51,3 +51,41 @@ print("_____________________________")
 #SCATTER MATRIX GRAFIGI
 #scatter_matrix(dataset)
 #pyplot.show()
+
+##DATASETI %80 TRAİN %20 TEST AYIRIYORUZ.
+array = dataset.values
+X = array[:,0:4] # 4CU ROW HARIC BUTUN INTLERI AL
+Y = array[:,4]  # SADECE 4CU ROWUN HEPSINI AL
+X_train, X_test, Y_train, Y_test = train_test_split(X,Y,test_size=0.20,random_state=1)
+
+
+#6 DEĞİŞİK ALGOYU ACCURACY SKORUNA GORE YAZDIR
+models = []
+models.append(('LR', LogisticRegression(solver='liblinear', multi_class='ovr')))
+models.append(('LDA', LinearDiscriminantAnalysis()))
+models.append(('KNN', KNeighborsClassifier()))
+models.append(('CART', DecisionTreeClassifier()))
+models.append(('NB', GaussianNB()))
+models.append(('SVM', SVC(gamma='auto')))
+sonuclar = []
+isimler = []
+for isim,model in models:
+    kfold = StratifiedKFold(n_splits=10,random_state=1,shuffle=True)
+    cv_results = cross_val_score(model,X_train, Y_train, cv=kfold,scoring='accuracy')
+    sonuclar.append(cv_results)
+    isimler.append(isim)
+    print("%s: %f (%f)" % (isim, cv_results.mean(), cv_results.std()))
+
+##ALGORITMA SONUCLARI KIYAASLA
+#pyplot.boxplot(sonuclar, labels=isimler)
+#pyplot.title('Algoritma kiyaslamasi')
+#pyplot.show()
+
+
+#TAHMIN URET
+model = SVC(gamma='auto')
+model.fit(X_train,Y_train)
+tahmin = model.predict(X_test)
+print(accuracy_score(Y_test, tahmin))
+print(confusion_matrix(Y_test, tahmin))
+print(classification_report(Y_test, tahmin))
