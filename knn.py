@@ -18,7 +18,6 @@ sokagaCik = ["Evet","Hayir","Evet","Evet","Evet","Hayir","Hayir","Evet","Hayir",
 # 0 nemli 1 sicak 2 Soguk
 # 0 evet 1 hayir
 encode = LabelEncoder()
-
 hava_enc = encode.fit_transform(hava)
 sicaklik_enc = encode.fit_transform(sicaklik)
 sokagaCik = encode.fit_transform(sokagaCik)
